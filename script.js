@@ -12,27 +12,20 @@ const apiUrls = [
   "https://jsonplaceholder.typicode.com/todos/10",
 ];
 
-// You can write your code here
-const startTime = Date.now();
-const Promises = apiUrls.map(fetchData);
-Promise.all(Promises)
-  .then(() => {
-    const endTime = Date.now();
-    const timeTaken = endTimeA - startTime;
-    document.getElementById("output-all").textContent = timeTaken + " ms";
-  })
-  .catch((error) => {
-    console.error("Promise.all() failed:", error);
-  });
+const fetchTime = async (promise) => {
+    const startTime = Date.now();
+    await promise;
+    return Date.now() - startTime;
+};
 
-promise.any(Promises){
-	.then(()=>{
-		const endTime = Date.now();
-    const timeTaken = endTime - startTime;
-    document.getElementById("output-all").textContent = timeTaken + " ms";
+const fetchData = async () => {
+    const allPromises = apiUrls.map(url => fetch(url).then(res => res.json()));
 
-	})
-	 .catch((error) => {
-    console.error("Promise.all() failed:", error);
-  });
+    const allTime = await fetchTime(Promise.all(allPromises));
+	document.getElementById('output-all').innerText = allTime + 'ms';
+
+    const anyTime = await fetchTime(Promise.any(allPromises));
+    document.getElementById('output-any').innerText = anyTime + 'ms';
 }
+
+fetchData();
